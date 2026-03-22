@@ -1,0 +1,11 @@
+#!/bin/sh
+# This script runs after the package is installed
+case "$1" in
+post)
+    echo "Setting strict permissions for Vuurmuur..."
+    chmod -R 0700 /etc/vuurmuur
+    find /etc/vuurmuur -type f -exec chmod 0600 {} +
+    echo "Setting strict permissions for Vuurmuur..."
+    chmod 0644 /etc/vuurmuur/vuurmuur_conf.conf
+    ;;
+esac
