@@ -1,0 +1,91 @@
+# Template file for 'vuurmuur'
+pkgname=vuurmuur
+version=0.8.2
+revision=1
+build_style=gnu-configure
+# Force installation to /usr
+configure_args="--prefix=/usr --sysconfdir=/etc --localstatedir=/var"
+hostmakedepends="pkg-config automake libtool"
+# Dependencies used when using, dialog is optional is for wizard but not detect interface
+depends="iptables iproute2 dialog"
+short_desc="Powerful firewall manager built on top of iptables"
+maintainer="Florin Tanasă <florin.tanasa@gmail.com>"
+license="GPL-2.0-or-later"
+homepage="https://www.vuurmuur.org"
+distfiles="https://www.vuurmuur.org/releases/stable/${pkgname}-${version}.tar.gz"
+checksum=6388c4df83b327603f632e15b3201c297247f91d8adcc49172675738b935a5b3
+# Dependencies used when compiling
+makedepends="libnetfilter_log-devel ncurses-devel libmnl-devel libnetfilter_conntrack-devel"
+
+# Vuurmuur needs next empty directories for rules and logs
+make_dirs="
+ etc/vuurmuur 0700 root root
+ etc/vuurmuur/interfaces 0700 root root
+ etc/vuurmuur/plugins 0700 root root
+ etc/vuurmuur/rules 0700 root root
+ etc/vuurmuur/services 0700 root root
+ etc/vuurmuur/zones 0700 root root
+ etc/vuurmuur/zones/inet/networks 0700 root root
+ var/log/vuurmuur 0750 root root"
+
+do_install() {
+    # 1. Standard binary installation
+    make DESTDIR=${DESTDIR} install
+
+    # 2. Creating the directory structure
+    vmkdir etc/vuurmuur 0700
+    for dir in interfaces plugins rules services; do
+        vmkdir etc/vuurmuur/${dir} 0700
+        # Add an empty file to prevent the directory from being deleted
+        touch ${DESTDIR}/etc/vuurmuur/${dir}/.keep_vuurmuur
+    done
+
+    # 3. Copying zones (dmz, inet, lan, vpn)
+    vcopy "installer/zones" etc/vuurmuur/
+
+    # 4. Processing config.conf - for just in case
+    # Copy the sample and replace /usr/local with /usr everywhere, if exist
+    cp config/config.conf.sample ${DESTDIR}/etc/vuurmuur/config.conf
+    sed -i "s|/usr/local|/usr|g" ${DESTDIR}/etc/vuurmuur/config.conf
+    chmod 0600 ${DESTDIR}/etc/vuurmuur/config.conf
+
+    # 5. Processing vuurmuur_conf.conf - for just in case
+    cp config/vuurmuur_conf.conf.sample ${DESTDIR}/etc/vuurmuur/vuurmuur_conf.conf
+    sed -i "s|/usr/local|/usr|g" ${DESTDIR}/etc/vuurmuur/vuurmuur_conf.conf
+    # Also correct the path to the config (if the sample is generic)
+    sed -i "s|CONFIG_FILE=.*|CONFIG_FILE=/etc/vuurmuur/config.conf|g" ${DESTDIR}/etc/vuurmuur/vuurmuur_conf.conf
+    chmod 0644 ${DESTDIR}/etc/vuurmuur/vuurmuur_conf.conf
+
+    # 6. Creating textdir.conf
+    echo "LOCATION=/etc/vuurmuur" > ${DESTDIR}/etc/vuurmuur/plugins/textdir.conf
+    chmod 0600 ${DESTDIR}/etc/vuurmuur/plugins/textdir.conf
+
+    # 7. Empty rules files (needed for syntax validation at startup)
+    touch ${DESTDIR}/etc/vuurmuur/rules/rules.conf
+    touch ${DESTDIR}/etc/vuurmuur/rules/blocklist.conf
+    chmod 0600 ${DESTDIR}/etc/vuurmuur/rules/*.conf
+
+    # 8. Runit and Log Services
+    # 8.1. Installing the main 'vuurmuur' service
+    vsv vuurmuur
+
+    # 8.2. Install the 'vuurmuur-log' logging service
+    vmkdir etc/sv/vuurmuur-log
+    vcopy "${FILESDIR}/vuurmuur-log/run" etc/sv/vuurmuur-log/
+    chmod 755 ${DESTDIR}/etc/sv/vuurmuur-log/run
+
+    # 8.3 Create the structure for logs
+    vmkdir var/log/vuurmuur 0750
+    touch ${DESTDIR}/var/log/vuurmuur/.keep_vuurmuur
+
+    # 9. Adjust permissions to meet Vuurmuur's strict requirements
+    # Force permissions to 0700 on the entire configuration folder
+    # to stop log warnings
+    chmod -R 0700 ${DESTDIR}/etc/vuurmuur
+
+    # Configuration files must be 0600
+    find ${DESTDIR}/etc/vuurmuur -type f -exec chmod 0600 {} +
+
+    # Exception for interface file
+    chmod 0644 ${DESTDIR}/etc/vuurmuur/vuurmuur_conf.conf
+}
