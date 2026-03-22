@@ -1,0 +1,12 @@
+#!/bin/sh
+exec 2>&1
+
+# Waiting for network/docker/libvirt initialization
+sleep 15
+
+# Clean up old PIDs
+rm -f /var/run/vuurmuur.pid
+
+# Start it in the foreground so that Runit sees it active
+exec /usr/bin/vuurmuur -D -n
+

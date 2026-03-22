@@ -1,0 +1,11 @@
+#!/bin/sh
+exec 2>&1
+
+# We are waiting for the main daemon vuurmuur (have sleep 15s) to start
+sleep 17
+
+# Clean up old PIDs
+rm -f /var/run/vuurmuur_log.pid
+
+# Start vuurmuur_log (logging) in the foreground
+exec /usr/bin/vuurmuur_log -n
