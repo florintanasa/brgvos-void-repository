@@ -28,6 +28,8 @@ make_dirs="
  etc/vuurmuur/zones/inet/networks 0700 root root
  var/log/vuurmuur 0750 root root"
 
+conf_files="/etc/vuurmuur/config.conf /etc/vuurmuur/plugins/textdir.conf /etc/vuurmuur/rules/rules.conf /etc/vuurmuur/rules/blocklist.conf /etc/vuurmuur/vuurmuur_conf.conf /etc/vuurmuur/zones/dmz/zone.config /etc/vuurmuur/zones/lan/zone.config /etc/vuurmuur/zones/vpn/zone.config /etc/vuurmuur/zones/inet/zone.config /etc/vuurmuur/zones/inet/networks/world/network.config"
+
 do_install() {
     # 1. Standard binary installation
     make DESTDIR=${DESTDIR} install
