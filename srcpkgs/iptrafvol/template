@@ -1,0 +1,61 @@
+# Template file for 'iptrafvol'
+pkgname=iptrafvol
+version=0.3.4
+revision=1
+short_desc="IP Traffic Volume monitor based on iptables"
+maintainer="Florin Tanasă <florin.tanasa@gmail.com>"
+license="GPL-2.0-or-later"
+homepage="http://iptrafficvolume.sourceforge.net"
+distfiles="${SOURCEFORGE_SITE}/iptrafficvolume/${pkgname}-${version}.tgz"
+checksum=57341fd06938e10889b01b5c07cbe740fe7c3138a5d6a6ee13d35604ac594ce9
+hostmakedepends="perl"
+depends="perl iptables"
+conf_files="/etc/cron.d/iptrafvol"
+
+post_extract() {
+	# Add =back before =head1 FILES (line 572) to fix the POD error
+	sed -i '/=head1 FILES/i =back\n' iptrafvol.pl
+}
+
+do_build() {
+    # Read from .pl to generate the manual
+    pod2man --center="User Commands" --release="${version}" iptrafvol.pl > iptrafvol.1
+}
+
+pre_install() {
+    # Correct the paths in the source files before they are installed in $DESTDIR
+	
+    # In the main script
+    sed -i 's|/sbin/iptables|/usr/bin/iptables|g' iptrafvol.pl
+
+    # In auxiliary files (CGI and Cron)
+        for f in "iptrafvol.cgi" "Examples/iptrafvol_cron.d" "Examples/iptrafvol_init.d"; do
+            sed -i 's|/usr/local/sbin/iptrafvol.pl|/usr/bin/iptrafvol.pl|g' "$f"
+        done
+}
+
+do_install() {
+    # 1. Install the original script
+    vbin iptrafvol.pl
+
+    # 2. Create the symbolic link (Relative to the system hierarchy)
+    # Use the destination directory in the package
+    vmkdir usr/bin
+    ln -sf iptrafvol.pl "${DESTDIR}/usr/bin/iptrafvol"
+
+    # 3. The rest of the files (manual, cgi, css, examples)
+    vman iptrafvol.1
+    vinstall iptrafvol.cgi 644 "usr/share/${pkgname}"
+    vinstall orange.css 644 "usr/share/${pkgname}"
+    vcopy Examples "usr/share/${pkgname}"
+    rm -rf "${DESTDIR}/usr/share/${pkgname}/Examples/CVS"
+
+    # 4. Log directory & Keep
+    vmkdir var/log/iptrafvol
+    touch "${DESTDIR}/var/log/iptrafvol/.keep-iptrafvol"
+    
+    # 5. Cron job
+    vinstall Examples/iptrafvol_cron.d 644 etc/cron.d iptrafvol
+}
+
+
