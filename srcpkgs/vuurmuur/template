@@ -1,13 +1,13 @@
 # Template file for 'vuurmuur'
 pkgname=vuurmuur
 version=0.8.2
-revision=1
+revision=2
 build_style=gnu-configure
 # Force installation to /usr
 configure_args="--prefix=/usr --sysconfdir=/etc --localstatedir=/var"
 hostmakedepends="pkg-config automake libtool"
 # Dependencies used when using, dialog is optional is for wizard but not detect interface
-depends="iptables iproute2 dialog"
+depends="iptables iproute2 iptrafvol dialog"
 short_desc="Powerful firewall manager built on top of iptables"
 maintainer="Florin Tanasă <florin.tanasa@gmail.com>"
 license="GPL-2.0-or-later"
