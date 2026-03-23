@@ -1,0 +1,12 @@
+# INSTALL file for 'iptrafvol'
+case "$ACTION" in
+post)
+	echo "Configuring the initial structure for iptrafvol..."
+	# Run the initialization command
+	/usr/bin/iptrafvol.pl -l >/dev/null 2>&1
+	
+        # Make sure the log directory has the correct permissions
+        # (In case the above run created files as root)
+	chmod -R 755 /var/log/iptrafvol
+	;;
+esac
