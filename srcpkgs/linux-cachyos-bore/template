@@ -1,7 +1,7 @@
 # Template file for 'linux-cachyos-bore'
 pkgname=linux-cachyos-bore
 version=6.19.6
-revision=1
+revision=3
 short_desc="Linux BORE + Cachy Sauce scheduler Kernel by CachyOS with other patches and improvements - (${version%.*} series)"
 maintainer="Florin Tanasă <florin.tanasa@gmail.com>"
 license="GPL-2.0-only"
