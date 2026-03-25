@@ -101,11 +101,12 @@ do_configure() {
 	if [ -f ${FILESDIR}/${subarch:-$arch}-dotconfig-custom ]; then
 		msg_normal "Detected a custom .config file for your arch, using it.\n"
 		cp -f ${FILESDIR}/${subarch:-$arch}-dotconfig-custom .config
-		make ${makejobs} ARCH=$arch ${_cross} oldconfig
+                make ${makejobs} ARCH=$arch ${_cross} LLVM=1 LLVM_IAS=1 oldconfig
 	elif [ -f ${FILESDIR}/${subarch:-$arch}-dotconfig ]; then
 		msg_normal "Detected a .config file for your arch, using it.\n"
 		cp -f ${FILESDIR}/${subarch:-$arch}-dotconfig .config
-		make ${makejobs} ARCH=$arch ${_cross} oldconfig
+                make ${makejobs} ARCH=$arch ${_cross} LLVM=1 LLVM_IAS=1 olddefconfig
+
 	fi
 
 	# Always use our revision to CONFIG_LOCALVERSION to match our pkg version.
@@ -125,8 +126,8 @@ do_build() {
 		riscv64*) _args="Image modules dtbs"; arch=riscv;;
 	esac
 	export LDFLAGS=
-	make ARCH=$arch ${_cross} ${makejobs} prepare
-	make ARCH=$arch ${_cross} ${makejobs} ${_args}
+    	make ARCH=$arch ${_cross} ${makejobs} LLVM=1 LLVM_IAS=1 prepare
+        make ARCH=$arch ${_cross} ${makejobs} LLVM=1 LLVM_IAS=1 ${_args}
 }
 
 do_install() {
@@ -148,7 +149,7 @@ do_install() {
 	ln -sf usr/lib/ ${DESTDIR}
 
 	# Install kernel, firmware and modules
-	make ${makejobs} ARCH=${subarch:-$arch} INSTALL_MOD_PATH=${DESTDIR} ${_cross} modules_install
+	make ${makejobs} ARCH=${subarch:-$arch} INSTALL_MOD_PATH=${DESTDIR} ${_cross} LLVM=1 LLVM_IAS=1 modules_install
 
 	hdrdest=${DESTDIR}/usr/src/kernel-headers-${_kernver}
 
