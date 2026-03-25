@@ -32,7 +32,7 @@ noshlibprovides=yes
 preserve=yes
 
 hostmakedepends="tar xz bc elfutils-devel flex gmp-devel kmod libmpc-devel
- pkg-config openssl-devel perl uboot-mkimage cpio pahole python3 zstd"
+ pkg-config openssl-devel perl uboot-mkimage cpio pahole python3 zstd rust rust-std rust-src rust-bindgen"
 
 _kernver="${version/rc/0-rc}_${revision}"
 triggers="kernel-hooks"
