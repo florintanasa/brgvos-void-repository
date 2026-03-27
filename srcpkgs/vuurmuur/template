@@ -28,7 +28,58 @@ make_dirs="
  etc/vuurmuur/zones/inet/networks 0700 root root
  var/log/vuurmuur 0750 root root"
 
-conf_files="/etc/vuurmuur/config.conf /etc/vuurmuur/plugins/textdir.conf /etc/vuurmuur/rules/rules.conf /etc/vuurmuur/rules/blocklist.conf /etc/vuurmuur/vuurmuur_conf.conf /etc/vuurmuur/zones/dmz/zone.config /etc/vuurmuur/zones/lan/zone.config /etc/vuurmuur/zones/vpn/zone.config /etc/vuurmuur/zones/inet/zone.config /etc/vuurmuur/zones/inet/networks/world/network.config"
+conf_files="/etc/vuurmuur/config.conf \
+/etc/vuurmuur/plugins/textdir.conf \
+/etc/vuurmuur/rules/rules.conf \
+/etc/vuurmuur/rules/blocklist.conf \
+/etc/vuurmuur/vuurmuur_conf.conf \
+/etc/vuurmuur/zones/dmz/zone.config \
+/etc/vuurmuur/zones/lan/zone.config \
+/etc/vuurmuur/zones/vpn/zone.config \
+/etc/vuurmuur/zones/inet/zone.config \
+/etc/vuurmuur/zones/inet/networks/world/network.config
+/etc/vuurmuur/services/ftp \
+/etc/vuurmuur/services/https \
+/etc/vuurmuur/services/ident \
+/etc/vuurmuur/services/imaps \
+/etc/vuurmuur/services/jabber \
+/etc/vuurmuur/services/lisa \
+/etc/vuurmuur/services/mysql \
+/etc/vuurmuur/services/nfs \
+/etc/vuurmuur/services/pcanywhere \
+/etc/vuurmuur/services/pop3 \
+/etc/vuurmuur/services/pptp \
+/etc/vuurmuur/services/rdp \
+/etc/vuurmuur/services/samba \
+/etc/vuurmuur/services/socks \
+/etc/vuurmuur/services/ssh \
+/etc/vuurmuur/services/telnet \
+/etc/vuurmuur/services/traceroute \
+/etc/vuurmuur/services/usermin \
+/etc/vuurmuur/services/webmin \
+/etc/vuurmuur/services/windowsmedia \
+/etc/vuurmuur/services/aim \
+/etc/vuurmuur/services/dns \
+/etc/vuurmuur/services/http \
+/etc/vuurmuur/services/icq \
+/etc/vuurmuur/services/imap \
+/etc/vuurmuur/services/irc \
+/etc/vuurmuur/services/ldap \
+/etc/vuurmuur/services/msn \
+/etc/vuurmuur/services/news \
+/etc/vuurmuur/services/ntp \
+/etc/vuurmuur/services/ping \
+/etc/vuurmuur/services/pop3s \
+/etc/vuurmuur/services/razor \
+/etc/vuurmuur/services/rsync \
+/etc/vuurmuur/services/smtp \
+/etc/vuurmuur/services/squid-proxy \
+/etc/vuurmuur/services/syslog \
+/etc/vuurmuur/services/tinc \
+/etc/vuurmuur/services/upnp \
+/etc/vuurmuur/services/vnc \
+/etc/vuurmuur/services/whois \
+/etc/vuurmuur/services/yahoo"
 
 do_install() {
     # 1. Standard binary installation
@@ -42,8 +93,13 @@ do_install() {
         touch ${DESTDIR}/etc/vuurmuur/${dir}/.keep_vuurmuur
     done
 
-    # 3. Copying zones (dmz, inet, lan, vpn)
+    # 3. Copying zones (dmz, inet, lan, vpn) and services (aim, ...)
     vcopy "installer/zones" etc/vuurmuur/
+    vcopy "services" etc/vuurmuur/
+    # Delete unnecessary files 
+    rm -f ${DESTDIR}/etc/vuurmuur/services/Makefile.am
+    rm -f ${DESTDIR}/etc/vuurmuur/services/Makefile.in    
+    rm -f ${DESTDIR}/etc/vuurmuur/services/Makefile
 
     # 4. Processing config.conf - for just in case
     # Copy the sample and replace /usr/local with /usr everywhere, if exist
