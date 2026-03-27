@@ -1,0 +1,48 @@
+--- a/scripts/vuurmuur-wizard.sh
++++ b/scripts/vuurmuur-wizard.sh
+@@ -133,7 +133,7 @@
+             echo -n "$DEV \"$IP $NET/$MASK \" OFF \\" >> $TMPCMD
+         fi
+     done
+-    echo -n "manual \"Interface is offline, enter manually\" OFF \\" >> $TMPCMD
++    echo -n "manual \"Interface is offline, enter manually\" OFF" >> $TMPCMD
+ }
+ 
+ function SelectInternetInterfaceDynamicSetup
+@@ -175,7 +175,7 @@
+             echo -n "$DEV \"$IP $NET/$MASK \" OFF \\" >> $TMPCMD
+         fi
+     done
+-    echo -n "none \"No LAN connected to this firewall\" OFF \\" >> $TMPCMD
++    echo -n "none \"No LAN connected to this firewall\" OFF" >> $TMPCMD
+ }
+ 
+ function SelectLanInterfaceDynamicSetup
+@@ -448,7 +448,7 @@
+ 
+     echo "" >> $CMD
+     echo "# FORWARDING Rules..." >> $CMD
+-    echo "$VMS --modify --rule rules --append --variable RULE --set \"separator options comment=\\\"FORWARDING rules\\\"\"" >> $CMD
++    echo "$VMS --modify --rule rules --append --variable RULE --set \"separator\"" >> $CMD
+     for rawservice in `cat $TMP`; do
+     	SERVICE=`stripit $rawservice`
+         if [ "$SERVICE" = "snat" ]; then
+@@ -475,7 +475,7 @@
+ 
+     echo "" >> $CMD
+     echo "# OUTGOING Rules..." >> $CMD
+-    echo "$VMS --modify --rule rules --variable RULE --set \"separator options comment=\\\"OUTGOING rules\\\"\"" >> $CMD
++    echo "$VMS --modify --rule rules --variable RULE --set \"separator\"" >> $CMD
+     for rawservice in `cat $TMP`; do
+     	SERVICE=`stripit $rawservice`
+     	echo "$VMS --modify --rule rules --append --variable RULE --set \"accept service $SERVICE from firewall to $INTERNET options log,loglimit=\\\"1\\\"\"" >> $CMD
+@@ -491,7 +491,7 @@
+ 
+     echo "" >> $CMD
+     echo "# INCOMING Rules..." >> $CMD
+-    echo "$VMS --modify --rule rules --append --variable RULE --set \"separator options comment=\\\"INCOMING rules\\\"\"" >> $CMD
++    echo "$VMS --modify --rule rules --append --variable RULE --set \"separator\"" >> $CMD
+     for rawservice in `cat $TMP`; do
+ 	    SERVICE=`stripit $rawservice`
+ 	    echo "$VMS --modify --rule rules --append --variable RULE --set \"accept service $SERVICE from $INTERNET to firewall options log,loglimit=\\\"1\\\"\"" >> $CMD
+
