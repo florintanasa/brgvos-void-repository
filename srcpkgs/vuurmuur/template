@@ -1,7 +1,7 @@
 # Template file for 'vuurmuur'
 pkgname=vuurmuur
 version=0.8.2
-revision=2
+revision=3
 build_style=gnu-configure
 # Force installation to /usr
 configure_args="--prefix=/usr --sysconfdir=/etc --localstatedir=/var"
