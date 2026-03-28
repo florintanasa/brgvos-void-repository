@@ -1,13 +1,13 @@
 # Template file for 'vuurmuur'
 pkgname=vuurmuur
 version=0.8.2
-revision=3
+revision=4
 build_style=gnu-configure
 # Force installation to /usr
 configure_args="--prefix=/usr --sysconfdir=/etc --localstatedir=/var"
 hostmakedepends="pkg-config automake libtool"
 # Dependencies used when using, dialog is optional is for wizard but not detect interface
-depends="iptables iproute2 iptrafvol dialog"
+depends="iptables iproute2 iptrafvol dialog xdotool logrotate"
 short_desc="Powerful firewall manager built on top of iptables"
 maintainer="Florin Tanasă <florin.tanasa@gmail.com>"
 license="GPL-2.0-or-later"
@@ -68,7 +68,8 @@ conf_files="/etc/vuurmuur/config.conf \
 /etc/vuurmuur/services/upnp \
 /etc/vuurmuur/services/vnc \
 /etc/vuurmuur/services/whois \
-/etc/vuurmuur/services/yahoo"
+/etc/vuurmuur/services/yahoo \
+/etc/logrotate.d/vuurmuur"
 
 do_install() {
     # 1. Standard binary installation
@@ -131,9 +132,21 @@ do_install() {
     # to stop log warnings
     chmod -R 0700 ${DESTDIR}/etc/vuurmuur
 
+    # 10. Instll launcher scripts
+    vbin "${FILESDIR}/vuurmuur-launcher"
+    vbin "${FILESDIR}/vuurmuur-wizard-launcher"
+
+    # 11. Install files .desktop
+    vinstall "${FILESDIR}/vuurmuur.desktop" 644 usr/share/applications
+    vinstall "${FILESDIR}/vuurmuur-wizard.desktop" 644 usr/share/applications
+
     # Configuration files must be 0600
     find ${DESTDIR}/etc/vuurmuur -type f -exec chmod 0600 {} +
 
     # Exception for interface file
     chmod 0644 ${DESTDIR}/etc/vuurmuur/vuurmuur_conf.conf
+
+    # 12. Install logrotate config
+    vinstall scripts/vuurmuur-logrotate 644 etc/logrotate.d vuurmuur
+
 }
