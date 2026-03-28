@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Vuurmuur Manager
+Comment=Configure Vuurmuur Firewall
+Exec=vuurmuur-launcher
+Icon=network-firewall
+Terminal=true
+Categories=Network;Security;Settings;
+Keywords=firewall;security;vuurmuur;
+
