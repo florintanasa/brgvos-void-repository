@@ -17,17 +17,6 @@ checksum=6388c4df83b327603f632e15b3201c297247f91d8adcc49172675738b935a5b3
 # Dependencies used when compiling
 makedepends="libnetfilter_log-devel ncurses-devel libmnl-devel libnetfilter_conntrack-devel"
 
-# Vuurmuur needs next empty directories for rules and logs
-make_dirs="
- etc/vuurmuur 0700 root root
- etc/vuurmuur/interfaces 0700 root root
- etc/vuurmuur/plugins 0700 root root
- etc/vuurmuur/rules 0700 root root
- etc/vuurmuur/services 0700 root root
- etc/vuurmuur/zones 0700 root root
- etc/vuurmuur/zones/inet/networks 0700 root root
- var/log/vuurmuur 0750 root root"
-
 conf_files="/etc/vuurmuur/config.conf \
 /etc/vuurmuur/plugins/textdir.conf \
 /etc/vuurmuur/rules/rules.conf \
@@ -94,12 +83,13 @@ do_install() {
     done
 
     # 3. Copying zones (dmz, inet, lan, vpn) and services (aim, ...)
-    vcopy "installer/zones" etc/vuurmuur/
-    vcopy "services" etc/vuurmuur/
-    # Delete unnecessary files 
-    rm -f ${DESTDIR}/etc/vuurmuur/services/Makefile.am
-    rm -f ${DESTDIR}/etc/vuurmuur/services/Makefile.in    
-    rm -f ${DESTDIR}/etc/vuurmuur/services/Makefile
+    vcopy "installer/zones" etc/vuurmuur/    
+    vmkdir etc/vuurmuur/services 0700
+    for s in services/*; do
+        # Install the services and pass the Makefiles
+        [[ "$s" == *Makefile* || "$s" == *.in || "$s" == *.am ]] && continue
+        vinstall "$s" 600 etc/vuurmuur/services
+    done
 
     # 4. Processing config.conf - for just in case
     # Copy the sample and replace /usr/local with /usr everywhere, if exist
