@@ -1,0 +1,15 @@
+#!/bin/bash
+# Launch application
+pkexec vuurmuur_conf -W
+
+# Detect if we are not in wayland
+if [ "$XDG_SESSION_TYPE" != "wayland" ]; then
+    # On X work with xdotool to close the kgx window
+    sleep 0.1
+    xdotool key ctrl+shift+w
+fi
+
+# On Wayland leave user to close the window manualy
+# (standard GNOME Security)
+exit 0
+
