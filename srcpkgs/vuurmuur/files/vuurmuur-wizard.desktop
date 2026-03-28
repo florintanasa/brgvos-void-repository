@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Vuurmuur Wizard
+Comment=Run Vuurmuur Configuration Wizard
+Exec=vuurmuur-wizard-launcher
+Icon=tools-wizard
+Terminal=true
+Type=Application
+Categories=Network;Security;Settings;
