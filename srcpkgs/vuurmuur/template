@@ -142,7 +142,6 @@ do_install() {
     # Exception for interface file
     chmod 0644 ${DESTDIR}/etc/vuurmuur/vuurmuur_conf.conf
 
-    # 12. Install logrotate config
+    # 11. Install logrotate config
     vinstall scripts/vuurmuur-logrotate 644 etc/logrotate.d vuurmuur
-
 }
