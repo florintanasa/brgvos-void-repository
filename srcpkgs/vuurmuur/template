@@ -1,13 +1,13 @@
 # Template file for 'vuurmuur'
 pkgname=vuurmuur
 version=0.8.2
-revision=4
+revision=5
 build_style=gnu-configure
 # Force installation to /usr
 configure_args="--prefix=/usr --sysconfdir=/etc --localstatedir=/var"
 hostmakedepends="pkg-config automake libtool"
 # Dependencies used when using, dialog is optional is for wizard but not detect interface
-depends="iptables iproute2 iptrafvol dialog xdotool logrotate"
+depends="iptables iproute2 iptrafvol dialog logrotate"
 short_desc="Powerful firewall manager built on top of iptables"
 maintainer="Florin Tanasă <florin.tanasa@gmail.com>"
 license="GPL-2.0-or-later"
@@ -132,11 +132,7 @@ do_install() {
     # to stop log warnings
     chmod -R 0700 ${DESTDIR}/etc/vuurmuur
 
-    # 10. Instll launcher scripts
-    vbin "${FILESDIR}/vuurmuur-launcher"
-    vbin "${FILESDIR}/vuurmuur-wizard-launcher"
-
-    # 11. Install files .desktop
+    # 10. Install files .desktop
     vinstall "${FILESDIR}/vuurmuur.desktop" 644 usr/share/applications
     vinstall "${FILESDIR}/vuurmuur-wizard.desktop" 644 usr/share/applications
 
