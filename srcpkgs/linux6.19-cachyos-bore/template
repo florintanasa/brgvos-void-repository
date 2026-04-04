@@ -1,7 +1,7 @@
 # Template file for 'linux6.19-cachyos-bore'
 pkgname=linux6.19-cachyos-bore
-version=6.19.6
-revision=4
+version=6.19.10
+revision=1
 short_desc="Linux BORE + Cachy Sauce scheduler Kernel by CachyOS with other patches and improvements - (${version%.*} series)"
 maintainer="Florin Tanasă <florin.tanasa@gmail.com>"
 license="GPL-2.0-only"
@@ -18,7 +18,7 @@ rc*) distfiles="https://git.kernel.org/torvalds/t/linux-${version%.*}-${version#
 esac
 
 checksum="303079a8250b8f381f82b03f90463d12ac98d4f6b149b761ea75af1323521357
- cb25f2161e2eed431e4d91eab65747cb1e626da6c2c1e6aa054025086d32da42"
+ 01d53fcab1e306f289004769090dd85857a4ce015a96f55f5fdede28bf4e02c9"
 
 python_version=3
 
@@ -34,7 +34,7 @@ preserve=yes
 hostmakedepends="tar xz bc elfutils-devel flex gmp-devel kmod libmpc-devel
  pkg-config openssl-devel perl uboot-mkimage cpio pahole python3 zstd rust rust-std rust-src rust-bindgen"
 
-_kernver="${version/rc/0-rc}-cachyos-bore_${revision}"
+_kernver="${version/rc/0-rc}_${revision}-cachyos-bore"
 
 triggers="kernel-hooks"
 kernel_hooks_version="${_kernver}"
@@ -87,7 +87,7 @@ do_configure() {
 	# as modules (allmodconfig).
 	local arch subarch _suffix
         # Define suffix name for kernel,modules,System and config
-        _suffix="-cachyos-bore_${revision}"
+        _suffix="_${revision}-cachyos-bore"
 
 	case "$XBPS_TARGET_MACHINE" in
 		i686*) arch=i386;;
