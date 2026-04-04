@@ -1,0 +1,59 @@
+From 57dac9b260270f9bf175c4e1a9ae0ffdcf77ae8e Mon Sep 17 00:00:00 2001
+From: Frogging-Family
+From: damachine <damachin3@proton.me>
+Date: Fri, 27 Mar 2026 03:11:16 +0100
+Subject: [PATCH] Add -O3 compiler optimization option
+
+Add CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE_O3 Kconfig option that allows
+building the kernel with -O3 instead of the default -O2.
+
+Signed-off-by: patch-family-tool <patches@frogging-family.invalid>
+
+---
+ Makefile     | 8 ++++++++
+ init/Kconfig | 6 ++++++
+ 2 files changed, 14 insertions(+)
+
+diff --git a/Makefile b/Makefile
+index 67c2f5dbb..9ceb369a5 100644
+--- a/Makefile
++++ b/Makefile
+@@ -870,11 +870,19 @@ KBUILD_CFLAGS	+= -fno-delete-null-pointer-checks
+ ifdef CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE
+ KBUILD_CFLAGS += -O2
+ KBUILD_RUSTFLAGS += -Copt-level=2
++else ifdef CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE_O3
++KBUILD_CFLAGS += -O3
++KBUILD_RUSTFLAGS += -Copt-level=3
+ else ifdef CONFIG_CC_OPTIMIZE_FOR_SIZE
+ KBUILD_CFLAGS += -Os
+ KBUILD_RUSTFLAGS += -Copt-level=s
+ endif
+ 
++# Perform swing modulo scheduling immediately before the first scheduling pass.
++# This pass looks at innermost loops and reorders their instructions by
++# overlapping different iterations.
++KBUILD_CFLAGS += $(call cc-option,-fmodulo-sched -fmodulo-sched-allow-regmoves -fivopts)
++
+ # Always set `debug-assertions` and `overflow-checks` because their default
+ # depends on `opt-level` and `debug-assertions`, respectively.
+ KBUILD_RUSTFLAGS += -Cdebug-assertions=$(if $(CONFIG_RUST_DEBUG_ASSERTIONS),y,n)
+diff --git a/init/Kconfig b/init/Kconfig
+index cab3ad28c..209b5dae7 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -1541,6 +1541,12 @@ config CC_OPTIMIZE_FOR_PERFORMANCE
+ 	  with the "-O2" compiler flag for best performance and most
+ 	  helpful compile-time warnings.
+ 
++config CC_OPTIMIZE_FOR_PERFORMANCE_O3
++	bool "Optimize more for performance (-O3)"
++	help
++	  Choosing this option will pass "-O3" to your compiler to optimize
++	  the kernel yet more for performance.
++
+ config CC_OPTIMIZE_FOR_SIZE
+ 	bool "Optimize for size (-Os)"
+ 	help
+-- 
+2.53.0
