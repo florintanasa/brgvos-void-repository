@@ -1,0 +1,35 @@
+# Template file for 'libslimbook'
+pkgname=libslimbook
+version=1.21.0
+revision=1
+build_style=meson
+hostmakedepends="pkg-config"
+makedepends="libusb-devel pciutils-devel"
+short_desc="Core library for Slimbook hardware integration"
+maintainer="Florin Tanasă <florin.tanasa@gmail.com>"
+license="GPL-3.0-or-later"
+homepage="https://github.com"
+# Download and rename the source tarball
+distfiles="https://github.com/Slimbook-Team/libslimbook/archive/refs/tags/${version}.tar.gz>libslimbook-${version}.tar.gz"
+checksum=0c4d633227f953c3a897a0fa51bc0d38c64916237b360b437608ea5588e7a129
+
+post_install() {
+    # Remove systemd files
+    rm -rf ${DESTDIR}/usr/lib/systemd
+
+    # Fix permissions for slimbookctl (xbps-src handles SUID via fperms)
+    # Remove the insecure Meson install and set it correctly
+    chmod 4755 ${DESTDIR}/usr/bin/slimbookctl
+
+    # Install runit service
+    vsv slimbook-settings
+}
+
+libslimbook-devel_package() {
+    short_desc="${short_desc} - development files"
+    depends="${sourcepkg}>=${version}_${revision}"
+    pkg_install() {
+        vmove usr/include
+        vmove "usr/lib/*.so"
+    }
+}

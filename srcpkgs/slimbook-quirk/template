@@ -1,0 +1,19 @@
+# Template file for 'slimbook-quirk'
+pkgname=slimbook-quirk
+version=1.2
+revision=1
+no_target=yes
+short_desc="Slimbook hardware quirks for i8042 (keyboard/s2idle fix)"
+maintainer="Florin Tanasă <florin.tanasa@gmail.com>"
+license="GPL-3.0-or-later"
+homepage="https://slimbook.com/en/blog/guides-2/post/software-and-drivers-evo-meta-package-495"
+
+do_install() {
+	# 1. Install udev rules to prevent spurious wakeups
+	vinstall ${FILESDIR}/90-slimbook-i8042-wakeup.rules 644 usr/lib/udev/rules.d
+
+	# 2. Install the reset script for Void's zzz utility
+	# We place it in /etc/zzz.d/resume to be executed after wake
+	vmkdir etc/zzz.d/resume
+	vinstall ${FILESDIR}/slimbook-i8042-reset 755 etc/zzz.d/resume 99-slimbook-i8042-reset
+}

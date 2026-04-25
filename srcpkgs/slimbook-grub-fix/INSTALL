@@ -1,0 +1,24 @@
+#!/bin/sh
+# Install script with backup for BRGV-OS an respin Void
+GRUB_FILE="/etc/default/grub"
+HOOK_MARKER="# Added by BRGV-OS slimbook-grub-fix"
+HOOK_LINE='for i in /etc/default/grub.d/*.cfg; do . "$i"; done'
+
+case "$ACTION" in
+post)
+    if [ -f "$GRUB_FILE" ]; then
+        if ! grep -q "$HOOK_MARKER" "$GRUB_FILE"; then
+            echo " Create backup before modification in ${GRUB_FILE}.bak.brgvos..."
+            cp "$GRUB_FILE" "${GRUB_FILE}.bak.brgvos"
+            
+            echo "" >> "$GRUB_FILE"
+            echo "$HOOK_MARKER" >> "$GRUB_FILE"
+            echo "$HOOK_LINE" >> "$GRUB_FILE"
+            
+            echo "Regenerating GRUB configuration..."
+            grub-mkconfig -o /boot/grub/grub.cfg
+        fi
+    fi
+    ;;
+esac
+

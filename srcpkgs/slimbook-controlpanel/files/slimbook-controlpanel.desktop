@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Slimbook Control Panel
+Comment=Configure Slimbook hardware and performance
+Exec=slimbook-controlpanel
+Icon=slimbook-controlpanel
+Terminal=false
+Type=Application
+Categories=Settings;System;Qt;
+Keywords=slimbook;control;settings;performance;
+StartupNotify=true

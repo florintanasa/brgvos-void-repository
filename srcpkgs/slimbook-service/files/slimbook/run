@@ -1,0 +1,20 @@
+#!/bin/sh
+# Redirect stderr to stdout for logging
+exec 2>&1
+
+# Check for the driver
+if ! lsmod | grep -q "qc71_laptop"; then
+    echo "Slimbook hardware not detected. Disabling service..."
+    # This command tells runit not to restart the service again
+    sv down .
+    exit 0
+fi
+
+# If we have the driver, run the daemon
+if [ -f /usr/share/slimbook/event-notify.py ]; then
+    exec /usr/bin/python3 /usr/share/slimbook/event-notify.py
+else
+    echo "Error: /usr/share/slimbook/event-notify.py not found!"
+    exit 1
+fi
+

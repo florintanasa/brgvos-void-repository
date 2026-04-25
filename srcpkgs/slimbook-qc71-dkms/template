@@ -1,0 +1,29 @@
+# Template file for 'slimbook-qc71-dkms'
+pkgname=slimbook-qc71-dkms
+version=1.0.1 # Adjust based on latest tag
+revision=1
+# We only install sources, so no_target is appropriate
+no_target=yes
+# DKMS is required to build the module on the target system
+depends="dkms"
+dkms_modules="slimbook-qc71 ${version}"
+short_desc="Slimbook QC71 kernel driver (DKMS)"
+maintainer="Florin Tanasă <florin.tanasa@gmail.com>"
+license="GPL-2.0-only"
+homepage="https://github.com/Slimbook-Team/slimbook-qc71"
+distfiles="https://github.com/Slimbook-Team/qc71_laptop/archive/refs/tags/${version}.tar.gz>slimbook-qc71-dkms-${version}.tar.gz"
+checksum=f0318668c2dffa3690437d8f21752fa89f4a343ed90c7a4819f1b75f36ab4c75
+
+wrksrc="qc71_laptop-${version}"
+
+do_install() {
+    # Target directory in /usr/src/
+    local dkms_dir="usr/src/slimbook-qc71-${version}"
+    vmkdir "${dkms_dir}"
+
+    # Copy files from the extracted wrksrc to the destination
+    vcopy "*" "${dkms_dir}"
+
+    # Install our custom dkms.conf
+    vinstall "${FILESDIR}/dkms.conf" 644 "${dkms_dir}"
+}

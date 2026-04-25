@@ -1,0 +1,29 @@
+# Template file for 'slimbook-grub-settings'
+pkgname=slimbook-grub-settings
+version=2026.04.19
+revision=1
+no_target=yes
+depends="grub"
+short_desc="Comprehensive GRUB hardware fixes for Slimbook laptops"
+maintainer="Florin Tanasă <florin.tanasa@gmail.com>"
+license="GPL-3.0-or-later"
+homepage="https://github.com/Slimbook-Team/slimbook-grub-settings"
+# We use the main branch directly
+distfiles="${homepage}/archive/refs/heads/main.tar.gz>slimbook-grub-settings-${version}.tar.gz"
+checksum=e9367e741356f086e0c6a51fd01299c145a8dcc051160ab4829966b977c2dd8e
+
+wrksrc="slimbook-grub-settings-main"
+
+do_install() {
+	vmkdir etc/default/grub.d
+	
+        # ADVANCED USERS: By default, BRGV-OS KEEPS the Slimbook fix
+        # which DISABLES AMD IOMMU (amd_iommu=off).
+        # If you need IOMMU for virtualization (PCI passthrough), 
+        # uncomment the 'rm' line below to remove the fix during build.
+        # rm -f slimbook-amd_iommu-fix.cfg
+
+
+	# Install all hardware fix configurations
+	vcopy "*.cfg" etc/default/grub.d
+}

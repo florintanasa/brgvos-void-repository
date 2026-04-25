@@ -1,0 +1,16 @@
+# Template file for 'python3-slimbook'
+pkgname=python3-slimbook
+version=1.21.0
+revision=1
+build_style=python3-pep517
+hostmakedepends="python3-setuptools python3-wheel pkg-config"
+makedepends="python3-devel libslimbook-devel"
+depends="python3 libslimbook"
+short_desc="Python bindings for libslimbook"
+maintainer="Florin Tanasă <florin.tanasa@gmail.com>"
+license="GPL-3.0-or-later"
+homepage="https://github.com"
+distfiles="https://github.com/Slimbook-Team/python-slimbook/archive/refs/tags/${version}.tar.gz>python-slimbook-${version}.tar.gz"
+checksum=546370f71f89eed86a3aa2899ab3d55b27e0e536051a693c212b7dedaf5c55b2
+
+wrksrc="python-slimbook-${version}"

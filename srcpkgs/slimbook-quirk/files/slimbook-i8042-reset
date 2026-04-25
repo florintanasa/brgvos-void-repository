@@ -1,0 +1,9 @@
+#!/bin/sh
+# Reset i8042 after s2idle (resume)
+# Translated from systemd sleep script for BRGV-OS (Void Linux)
+
+if [ -e /sys/bus/serio/drivers/atkbd/unbind ]; then
+    echo "serio0" > /sys/bus/serio/drivers/atkbd/unbind
+fi
+
+exit 0

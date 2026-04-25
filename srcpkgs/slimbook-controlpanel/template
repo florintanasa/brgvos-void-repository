@@ -1,0 +1,29 @@
+# Template file for 'slimbook-controlpanel'
+pkgname=slimbook-controlpanel
+version=2026.04.21
+revision=1
+build_style=meson
+hostmakedepends="pkg-config meson ninja qt6-base qt6-declarative-host-tools"
+makedepends="qt6-base-devel qt6-declarative-devel qt6-svg-devel libslimbook-devel"
+depends="python3-slimbook slimbook-service polkit libslimbook"
+short_desc="Slimbook Control Panel (Qt6/QML)"
+maintainer="Florin Tanasă <florin.tanasa@gmail.com>"
+license="GPL-3.0-or-later"
+homepage="https://github.com/Slimbook-Team/slimbook-controlpanel"
+distfiles="${homepage}/archive/refs/heads/main.tar.gz>slimbook-controlpanel-${version}.tar.gz"
+checksum=7b3236b8575a5e47b5afa3b7271a9d0dbf220eaf0bdd79323c7abae1297c083d
+
+# Add echo "libslimbook.so.1 libslimbook-1.21.0_1" >> common/shlibs
+
+wrksrc="slimbook-controlpanel-main"
+
+post_install() {
+    # Remove systemd files
+    rm -rf ${DESTDIR}/usr/lib/systemd
+
+    # Install the desktop file for the Menu
+    #vinstall ${FILESDIR}/slimbook-controlpanel.desktop 644 usr/share/applications
+
+    # Install the icon file for the Menu
+    #vinstall ${FILESDIR}/slimbook-controlpanel.png 644 usr/share/pixmaps
+}

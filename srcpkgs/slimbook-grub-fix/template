@@ -1,0 +1,17 @@
+# Template file for 'slimbook-grub-fix'
+pkgname=slimbook-grub-fix
+version=24.4.1
+revision=1
+no_target=yes
+depends="grub"
+short_desc="Hardware quirks for Slimbook (EC, GPIO and PSR fixes)"
+maintainer="Florin Tanasă <florin.tanasa@gmail.com>"
+license="GPL-3.0-or-later"
+homepage="https://slimbook.com/en/blog/guides-2/post/software-and-drivers-evo-meta-package-495"
+
+do_install() {
+	vmkdir etc/default/grub.d
+	vinstall ${FILESDIR}/slimbook-ecwake-fix.cfg 644 etc/default/grub.d
+	vinstall ${FILESDIR}/slimbook-gpiowake-fix.cfg 644 etc/default/grub.d
+	vinstall ${FILESDIR}/slimbook-psr-fix.cfg 644 etc/default/grub.d
+}

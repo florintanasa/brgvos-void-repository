@@ -1,0 +1,25 @@
+# Template file for 'slimbook-yt6801-dkms'
+pkgname=slimbook-yt6801-dkms
+version=1.0.30 # Adjust based on the latest version in the repo
+revision=1
+no_target=yes
+depends="dkms"
+dkms_modules="yt6801 ${version}"
+short_desc="Motorcomm YT6801 Ethernet driver (DKMS)"
+maintainer="Florin Tanasă <florin.tanasa@gmail.com>"
+license="GPL-2.0-only"
+homepage="https://github.com/Slimbook-Team/slimbook-yt6801-dkms"
+distfiles="https://github.com/Slimbook-Team/slimbook-yt6801-dkms/archive/refs/tags/${version}.slimbook2.tar.gz>slimbook-yt6801-dkms-${version}.tar.gz"
+checksum=ab99af93ee72a9177e48ce70a2824ea384ff3c255a5933f7ebc85ff01bbbcfab
+
+do_install() {
+    local dkms_dir="usr/src/yt6801-${version}"
+    vmkdir "${dkms_dir}"
+
+    # Copy the contents of the 'src' directory directly into the dkms_dir
+    # This ensures Makefile and .c files are at the root of the DKMS folder
+    vcopy "src/*" "${dkms_dir}"
+
+    # Overwrite the original dkms.conf with our Void-optimized one
+    vinstall "${FILESDIR}/dkms.conf" 644 "${dkms_dir}"
+}
