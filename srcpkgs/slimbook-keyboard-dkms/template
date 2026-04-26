@@ -1,0 +1,29 @@
+# Template file for 'slimbook-keyboard-dkms'
+pkgname=slimbook-keyboard-dkms
+version=0.2.8
+revision=1
+# We only install sources, so no_target is appropriate
+no_target=yes
+# DKMS is required to build the module on the target system
+depends="dkms"
+dkms_modules="slimbook-keyboard ${version}"
+short_desc="Slimbook keyboard kernel driver (DKMS)"
+maintainer="Florin Tanasă <florin.tanasa@gmail.com>"
+license="GPL-2.0-only"
+homepage="https://github.com/Slimbook-Team/slimbook-keyboard-dkms"
+distfiles="https://github.com/Slimbook-Team/slimbook-keyboard-dkms/archive/refs/tags/${version}.tar.gz>slimbook-keyboard-dkms-${version}.tar.gz"
+checksum=8ddc77c6bfd1b14ebf8bd83faa76774082f575031ef154604ba004c4b2509363
+
+wrksrc="slimbook-keyboard-dkms-${version}"
+
+do_install() {
+    # Target directory in /usr/src/
+    local dkms_dir="usr/src/slimbook-keyboard-${version}"
+    vmkdir "${dkms_dir}"
+
+    # Copy files from the extracted wrksrc to the destination
+    vcopy "slimbook_keyboard-0.0/*" "${dkms_dir}"
+
+    # Install our custom dkms.conf
+    vinstall "${FILESDIR}/dkms.conf" 644 "${dkms_dir}"
+}
