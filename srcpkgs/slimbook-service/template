@@ -1,49 +1,43 @@
 # Template file for 'slimbook-service'
 pkgname=slimbook-service
-version=0.3.3
+version=1.0.10
 revision=1
 no_target=yes
-depends="python3 python3-dbus python3-pyzmq python3-gobject python3-evdev libnotify libayatana-appindicator libslimbook"
+depends="libayatana-appindicator libnotify libslimbook power-profiles-daemon
+ python3-evdev python3-feedparser python3-gobject python3-pyudev python3-pyzmq
+ python3-requests python3-slimbook python3-dateutil bubblewrap"
 short_desc="Slimbook background service for notifications and events"
 maintainer="Florin Tanasă <florin.tanasa@gmail.com>"
 license="GPL-3.0-or-later"
-homepage="https://github.com"
-distfiles="https://github.com/Slimbook-Team/slimbook_service/archive/refs/tags//${version}.tar.gz>slimbook_service-${version}.tar.gz"
-checksum=b9f94aca4766b255ddf99a96639a6e57708f505895f87a626e7a6b0d171c30d8
+homepage="https://github.com/Slimbook-Team/slimbook_service"
+distfiles="${homepage}/archive/refs/tags/${version}.tar.gz>slimbook_service-${version}.tar.gz"
+checksum=a6c43a105725f00ed9045d4a633afeae8cbcbe8cedc14176d8888a41e718e258
 
 wrksrc="slimbook_service-${version}"
 
 do_install() {
-	# Enter the source directory
 	cd slimbook
 
-	# 1. Install the tray indicator binary
-        vmkdir usr/bin
-	vinstall bin/slimbookindicator 755 usr/bin
+	# 1. Binary file
+	vbin bin/slimbookindicator
 
-	# 2. Install the event-notify daemon, iscons and other scripts
+	# 2. Python and Desktop resources
 	vmkdir usr/share/slimbook
+	# Copies all from slimbook
 	vcopy "usr/share/slimbook/*" usr/share/slimbook
 
-	# 3. Install Desktop files
-	vmkdir usr/share/applications
-	vinstall usr/share/slimbook/slimbook-indicator.desktop 644 usr/share/applications
+	# 3. Install icons
+	vmkdir usr/share/icons
+	vcopy "usr/share/icons/*" usr/share/icons
 
-	# 4. Install Icons
-	vmkdir usr/share/pixmaps
-	vcopy "usr/share/slimbook/icons/*.svg" usr/share/pixmaps
+	# 4. Desktop integration (Menu & Autostart)
+	vinstall usr/share/slimbook/slimbook-indicator.desktop 644 usr/share/applications
+	vmkdir etc/xdg/autostart
+	vinstall usr/share/slimbook/slimbook-client-autostart.desktop 644 etc/xdg/autostart
 }
 
+
 post_install() {
-	# 5. Cleanup systemd specific files from source if any were copied
-	rm -rf ${DESTDIR}/usr/lib/systemd
-	rm -rf ${DESTDIR}/etc/systemd
-
-	# 6. Global Autostart for the indicator (User Session)
-	vmkdir etc/xdg/autostart
-	vinstall slimbook/usr/share/slimbook/slimbook-client-autostart.desktop 644 etc/xdg/autostart
-
-	# 7. Runit Service for the event daemon (System Service)
-	# This will use the 'run' file from srcpkgs/slimbook_service/files/slimbook/
+	# 6. Runit Service
 	vsv slimbook
 }
