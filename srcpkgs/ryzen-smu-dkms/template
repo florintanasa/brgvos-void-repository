@@ -1,0 +1,33 @@
+# Template file for 'ryzen-smu-dkms'
+pkgname=ryzen-smu-dkms
+version=2026.05.04 # Adjust based on latest tag
+revision=1
+# We only install sources, so no_target is appropriate
+no_target=yes
+# DKMS is required to build the module on the target system
+depends="dkms"
+dkms_modules="ryzen-smu ${version}"
+short_desc="SMU Driver for AMD Ryzen Processors (DKMS)"
+maintainer="Florin Tanasă <florin.tanasa@gmail.com>"
+license="GPL-2.0-only"
+homepage="https://github.com/amkillam/ryzen_smu"
+distfiles="${homepage}/archive/refs/heads/main.tar.gz>ryzen-smu-dkms-${version}.tar.gz"
+checksum="7cf28a045a09fd9f90f7766651473a8f7d4cc49e13dd4a757f4521c92fb42f57"
+
+wrksrc="ryzen-smu-main"
+
+do_install() {
+    # Target directory in /usr/src/
+    local dkms_dir="usr/src/ryzen-smu-${version}"
+    vmkdir "${dkms_dir}"
+
+    # Copy files from the extracted wrksrc to the destination
+    vcopy "Makefile" "${dkms_dir}"
+    vcopy "*.c" "${dkms_dir}"
+    vcopy "*.h" "${dkms_dir}"
+    vcopy "LICENSE" "${dkms_dir}"
+
+    # Install custom dkms.conf
+    vinstall "${FILESDIR}/dkms.conf" 644 "${dkms_dir}"
+    sed -i "s/PACKAGE_VERSION=.*/PACKAGE_VERSION=\"${version}\"/" "${DESTDIR}/${dkms_dir}/dkms.conf"
+}
