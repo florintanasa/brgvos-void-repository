@@ -1,0 +1,12 @@
+#!/bin/sh
+# Redirect stderr to stdout for logging
+exec 2>&1
+
+# Load Slimbook settings at boot
+if [ -x /usr/bin/slimbookctl ]; then
+    /usr/bin/slimbookctl config-load
+fi
+
+# Keep the service "active" so runit can run the finish script on shutdown
+exec pause
+

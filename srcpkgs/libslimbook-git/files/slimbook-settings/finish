@@ -1,0 +1,8 @@
+#!/bin/sh
+# Redirect stderr to stdout for logging
+exec 2>&1
+
+# Store Slimbook settings on shutdown
+if [ -x /usr/bin/slimbookctl ]; then
+    /usr/bin/slimbookctl config-store
+fi
