@@ -1,0 +1,18 @@
+# Template file for 'slimbook-evo-grub-fix'
+pkgname=slimbook-evo-grub-fix
+version=24.4.1
+revision=1
+no_target=yes
+depends="grub"
+short_desc="Comprehensive GRUB hardware fixes for Slimbook EVO laptops (EC, GPIO, IOMEM and PSR fixes)"
+maintainer="Florin Tanasă <florin.tanasa@gmail.com>"
+license="GPL-3.0-or-later"
+homepage="https://slimbook.com/en/blog/guides-2/post/software-and-drivers-evo-meta-package-495"
+
+do_install() {
+	vmkdir etc/default/grub.d
+	vinstall ${FILESDIR}/slimbook-ecwake-fix.cfg 644 etc/default/grub.d
+	vinstall ${FILESDIR}/slimbook-iomem-fix.cfg 644 etc/default/grub.d
+	vinstall ${FILESDIR}/slimbook-plymouth-fix.cfg 644 etc/default/grub.d
+	vinstall ${FILESDIR}/slimbook-psr-fix.cfg 644 etc/default/grub.d
+}
