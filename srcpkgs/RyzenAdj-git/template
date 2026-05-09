@@ -1,0 +1,22 @@
+# Template file for 'RyzenAdj-git'
+pkgname=RyzenAdj-git
+version=2026.05.04
+revision=1
+archs="x86_64*"
+build_style=cmake
+makedepends="pciutils-devel"
+short_desc="Adjust power management settings for mobile Ryzen Processors"
+maintainer="Florin Tanasă <florin.tanasa@gmail.com>"
+license="LGPL-3.0-only"
+homepage="https://github.com/FlyGoat/RyzenAdj"
+distfiles="${homepage}/archive/refs/heads/master.tar.gz>RyzenAdj-git-${version}.tar.gz"
+checksum="38ee86d273fabaa67516c3dcede3e339d3fdf86fd0e327f47a8c8f5ca217dda1"
+
+conflicts="RyzenAdj>=0"
+replaces="RyzenAdj>=0"
+
+wrksrc="RyzenAdj-git-master"
+
+do_install() {
+	vbin build/ryzenadj
+}
