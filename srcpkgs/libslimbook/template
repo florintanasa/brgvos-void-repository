@@ -1,7 +1,7 @@
 # Template file for 'libslimbook'
 pkgname=libslimbook
 version=1.21.0
-revision=1
+revision=2
 build_style=meson
 hostmakedepends="pkg-config"
 makedepends="libusb-devel pciutils-devel"
@@ -12,6 +12,9 @@ homepage="https://github.com"
 # Download and rename the source tarball
 distfiles="https://github.com/Slimbook-Team/libslimbook/archive/refs/tags/${version}.tar.gz>libslimbook-${version}.tar.gz"
 checksum=0c4d633227f953c3a897a0fa51bc0d38c64916237b360b437608ea5588e7a129
+
+#conflicts="libslimbook-git>=0"
+replaces="libslimbook-git>=0"
 
 post_install() {
     # Remove systemd files
