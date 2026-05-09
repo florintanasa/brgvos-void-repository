@@ -1,0 +1,17 @@
+# Template file for 'slimbook-backlight'
+pkgname=slimbook-backlight
+version=1.0
+revision=1
+short_desc="Save and restore backlight brightness for Slimbook laptops"
+maintainer="Florin Tanasă <florin.tanasa@gmail.com>"
+license="MIT"
+homepage="https://github.com/florintanasa/brgvos-void"
+
+do_install() {
+	# Create storage directory for the brightness state
+	vmkdir var/lib/backlight
+	touch ${DESTDIR}/var/lib/backlight/.keep
+	
+	# Install the runit service
+	vsv slimbook-backlight
+}

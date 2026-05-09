@@ -1,0 +1,36 @@
+#!/bin/sh
+# Redirect stderr to stdout for logging
+exec 2>&1
+
+# Automatically detect the active backlight interface (e.g., amdgpu_bl1 or amdgpu_bl0)
+BL_PATH=$(ls -d /sys/class/backlight/amdgpu_bl* 2>/dev/null | head -n 1)
+STATE_FILE="/var/lib/backlight/last_brightness"
+
+if [ -z "$BL_PATH" ]; then
+    echo "Error: No AMD backlight interface found in /sys/class/backlight/"
+    exit 1
+fi
+
+# 1. Restore brightness at boot
+if [ -f "$STATE_FILE" ]; then
+    echo "Restoring saved brightness from $STATE_FILE"
+    cat "$STATE_FILE" > "$BL_PATH/brightness"
+else
+    # Default to ~40% if no state file exists (approx 25000 for 62451 max)
+    echo "No state file found. Setting default brightness to 25000"
+    echo 25000 > "$BL_PATH/brightness"
+fi
+
+# 2. Monitor and save brightness changes
+# The loop checks every 30 seconds for changes to avoid unnecessary disk writes
+while true; do
+    if [ -f "$BL_PATH/brightness" ]; then
+        curr=$(cat "$BL_PATH/brightness")
+        prev=$(cat "$STATE_FILE" 2>/dev/null)
+        
+        if [ "$curr" != "$prev" ]; then
+            echo "$curr" > "$STATE_FILE"
+        fi
+    fi
+    sleep 30
+done
