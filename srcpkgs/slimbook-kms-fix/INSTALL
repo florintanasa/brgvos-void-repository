@@ -1,0 +1,26 @@
+#!/bin/sh
+# $1 = action (PRE/POST), $2 = pkgname, $3 = version
+
+case "$1" in
+post)
+    echo "Regenerating initramfs with Early KMS support for all kernels..."
+
+    # Loop through all kernels found in /boot
+    for kernel in /boot/vmlinuz-*; do
+        # Skip if no kernels are found
+        [ -e "$kernel" ] || continue
+
+        # Extract the version from the filename (e.g., vmlinuz-6.1.20_1 -> 6.1.20_1)
+        _ver="${kernel#*-}"
+        
+        echo "=> Processing kernel: ${_ver}"
+        
+        # Run dracut for each specific kernel version
+        # It will use the /etc/dracut.conf.d/10-amdgpu.conf we just installed
+        /usr/bin/dracut --force --kver "${_ver}"
+    done
+
+    echo "Initramfs regeneration complete."
+    ;;
+esac
+
