@@ -1,0 +1,19 @@
+# Template file for 'python3-slimbook-git'
+pkgname=python3-slimbook-git
+version=2026.05.08
+revision=1
+build_style=python3-pep517
+hostmakedepends="python3-setuptools python3-wheel pkg-config"
+makedepends="python3-devel libslimbook-devel"
+depends="python3 libslimbook"
+short_desc="Python bindings for libslimbook"
+maintainer="Florin Tanasă <florin.tanasa@gmail.com>"
+license="GPL-3.0-or-later"
+homepage="https://github.com/Slimbook-Team/python-slimbook"
+distfiles="${homepage}/archive/refs/heads/main.tar.gz>python-slimbook-${version}.tar.gz"
+checksum="1c0f676d7e9e48502d7a402f4af8fe7d09d8e1c20a5558fffdcc8380424fc916"
+
+#conflicts="python3-slimbook>=0"
+replaces="python3-slimbook>=0"
+
+wrksrc="python-slimbook-main"
