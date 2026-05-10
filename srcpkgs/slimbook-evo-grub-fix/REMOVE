@@ -1,12 +1,12 @@
 #!/bin/sh
 # Uninstall script for BRGV-OS an respin Void
 GRUB_FILE="/etc/default/grub"
-HOOK_MARKER="# Added by BRGV-OS slimbook-grub-fix"
+HOOK_MARKER="# Added by BRGV-OS slimbook-evo-grub-fix"-
 
 case "$ACTION" in
 purge)
     if [ -f "$GRUB_FILE" ]; then
-        if grep -q "$HOOK_MARKER" "$GRUB_FILE"; then
+        if grep -qF "$HOOK_MARKER" "$GRUB_FILE"; then
             # Remove the marker and the hook line (next line)
             sed -i "/$HOOK_MARKER/,+1d" "$GRUB_FILE"
             
