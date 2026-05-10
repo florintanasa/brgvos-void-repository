@@ -1,16 +1,16 @@
 # Template file for 'slimbook-kms-fix'
 pkgname=slimbook-kms-fix
-version=1.0
+version=1.1
 revision=1
 hostmakedepends="dracut"
 depends="dracut"
-short_desc="Force Early KMS for amdgpu to ensure smooth Plymouth transition"
+short_desc="Force Early KMS for amdgpu to ensure smooth Plymouth transition and load module necessary for keyboard"
 maintainer="Florin Tanasă <florin.tanasa@gmail.com>"
 license="MIT"
 homepage="https://github.com/florintanasa/brgvos-void"
 
 do_install() {
-	# Create the dracut configuration to force load amdgpu
+	# Create the dracut configuration to force load amdgpu and drivers for keyboard 
 	vmkdir usr/lib/dracut/dracut.conf.d
-	echo 'force_drivers+=" amdgpu "' > ${DESTDIR}/usr/lib/dracut/dracut.conf.d/10-amdgpu.conf
+	echo 'force_drivers+=" amdgpu qc71_laptop sparse_keymap i2c_hid i2c_hid_acpi hid_generic atkbd i8042 led_class_multicolor "' > ${DESTDIR}/usr/lib/dracut/dracut.conf.d/20-slimbook.conf
 }
