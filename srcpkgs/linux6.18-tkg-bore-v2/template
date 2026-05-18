@@ -1,6 +1,6 @@
 # Template file for 'linux6.18-tkg-bore-v2'
 pkgname=linux6.18-tkg-bore-v2
-version=6.18.29
+version=6.18.32
 revision=1
 short_desc="Linux kernel and modules (${version%.*} series) with TKG patches optimization v2"
 maintainer="Florin Tanasă <florin.tanasa@gmail.com>"
@@ -18,7 +18,7 @@ rc*) distfiles="https://git.kernel.org/torvalds/t/linux-${version%.*}-${version#
 esac
 
 checksum="9106a4605da9e31ff17659d958782b815f9591ab308d03b0ee21aad6c7dced4b
- 603e69e34d7d6b8e9a8fb87d9f41cce12ab0cc289c6e0c9fc6883f98832f6258"
+ 983a951b6572cf547c8fd9148c0cbd4f8dc3d773d76afe5df58de519f04e7243"
 
 python_version=3
 
@@ -110,9 +110,7 @@ do_configure() {
 		cp -f ${FILESDIR}/${subarch:-$arch}-dotconfig .config
 		
 		# Set some configs to set optimization for version 3 CPU
-		#./scripts/config --disable CONFIG_GENERIC_CPU
-		#./scripts/config --disable CONFIG_X86_64_V3
-		#./scripts/config --enable CONFIG_X86_64_V2
+		#./scripts/config --set-val CONFIG_X86_64_VERSION 2
 		
 		# You can more specific if you wish
 		# Not enable or disable CONFIG_X86_64_v3
