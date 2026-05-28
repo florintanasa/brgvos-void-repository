@@ -1,0 +1,45 @@
+# Template file for 'lemonade-desktop'
+pkgname=lemonade-desktop
+version=10.6.0
+revision=1
+build_style=cargo
+make_build_target="src/app"
+hostmakedepends="pkg-config nodejs libwebkit2gtk41-devel libnotify-devel libayatana-appindicator-devel"
+makedepends="libwebkit2gtk41-devel libnotify-devel libayatana-appindicator-devel"
+depends="libwebkit2gtk41 libnotify libayatana-appindicator lemonade-server"
+short_desc="AI-powered omni-modal platform featuring LMX-Omni models (Desktop Client)"
+maintainer="Florin Tanasă <florin.tanasa@gmail.com>"
+license="Apache-2.0"
+homepage="https://github.com/lemonade-sdk/lemonade"
+
+distfiles="${homepage}/archive/refs/tags/v${version}.tar.gz>lemonade-${version}.tar.gz"
+
+checksum="552d4585044e482b017a2cd6522731cef42d5984673db2daf43056065643060e"
+
+export TAURI_SKIP_NPM_INSTALL=1
+
+pre_build() {
+	cd ${wrksrc}/src/app
+	npm install --offline || npm install
+	npm run build
+}
+
+do_build() {
+	:
+}
+
+do_install() {
+	vbin src/app/src-tauri/target/release/lemonade-app lemonade-desktop
+
+	vinstall data/lemonade-app.desktop 644 usr/share/applications lemonade-desktop.desktop
+
+	if [ -f src/app/src-tauri/icons/128x128.png ]; then
+		vinstall src/app/src-tauri/icons/128x128.png 644 usr/share/pixmaps lemonade-desktop.png
+	elif [ -f src/app/src-tauri/icons/icon.png ]; then
+		vinstall src/app/src-tauri/icons/icon.png 644 usr/share/pixmaps lemonade-desktop.png
+	fi
+
+	sed -i 's|Exec=.*|Exec=env WEBKIT_DISABLE_COMPOSITING_MODE=1 /usr/bin/lemonade-desktop|' ${DESTDIR}/usr/share/applications/lemonade-desktop.desktop
+	sed -i 's/Icon=.*/Icon=lemonade-desktop/' ${DESTDIR}/usr/share/applications/lemonade-desktop.desktop
+	sed -i 's/Name=.*/Name=Lemonade Desktop/' ${DESTDIR}/usr/share/applications/lemonade-desktop.desktop
+}
