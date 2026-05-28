@@ -1,0 +1,26 @@
+#!/bin/sh
+# Runit service for Ollama in BRGV-OS
+
+# Redirect standard errors to the system log
+exec 2>&1
+
+# Point to the official global paths where XBPS extracted the ROCm libraries
+export LD_LIBRARY_PATH="/usr/lib:/usr/lib64:/usr/lib/ollama:/usr/lib/ollama/rocm:$LD_LIBRARY_PATH"
+
+# Global production path for downloaded models
+export OLLAMA_MODELS="/var/lib/ollama"
+
+# Force Ollama to generate its configuration keys and cache inside its own secure directory
+export HOME="/var/lib/ollama"
+
+# Critical override for the Radeon 880M iGPU (RDNA 3.5 architecture)
+export HSA_OVERRIDE_GFX_VERSION=11.5.0
+
+# Bind server to localhost for security by default
+export OLLAMA_HOST="127.0.0.1"
+
+# Uncomment the line below if you want Ollama to be visible on your local network
+# export OLLAMA_HOST="0.0.0.0"
+
+# Launch the Ollama server securely under the 'ollama' system user
+exec chpst -u ollama:video /usr/bin/ollama serve

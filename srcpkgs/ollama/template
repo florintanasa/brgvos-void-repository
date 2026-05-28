@@ -1,0 +1,40 @@
+# Template file for 'ollama'
+pkgname=ollama
+version=0.24.0
+revision=3
+archs="x86_64"
+hostmakedepends="zstd tar"
+depends="zstd"
+system_accounts="ollama"
+ollama_groups="video"
+nostrip=yes
+make_dirs="/var/lib/ollama 0755 ollama ollama"
+allow_unknown_shlibs=yes
+shlib_provides="!libelf.so.1"
+shlib_requires="!libcuda.so.1"
+short_desc="Get up and running with large language models locally (binary)"
+maintainer="Florin Tanasă <florin.tanasa@gmail.com>"
+license="MIT"
+homepage="https://ollama.com"
+distfiles="https://ollama.com/download/ollama-linux-amd64.tar.zst"
+
+checksum="15c5f8d66ba06e0d3b4719df8868612dbd66e14e82760929bb3552e1657cdcdb"
+
+do_install() {
+	mkdir -p ${DESTDIR}/usr
+	tar -x --zstd -f ${XBPS_SRCDISTDIR}/${pkgname}-${version}/ollama-linux-amd64.tar.zst -C ${DESTDIR}/usr
+
+	mv ${DESTDIR}/usr/bin/ollama ${DESTDIR}/usr/bin/ollama_bin 2>/dev/null || true
+	vmkdir usr/bin
+	mv ${DESTDIR}/usr/bin/ollama_bin ${DESTDIR}/usr/bin/ollama 2>/dev/null || true
+
+	vmkdir etc/security/limits.d
+	cat <<-EOF > ${DESTDIR}/etc/security/limits.d/99-ollama.conf
+	# Allow users in video/render groups to block memory for LLM execution
+	@video    soft   memlock   unlimited
+	@video    hard   memlock   unlimited
+	EOF
+
+	vmkdir etc/sv/ollama
+	vinstall ${FILESDIR}/ollama/run 755 etc/sv/ollama run
+}
