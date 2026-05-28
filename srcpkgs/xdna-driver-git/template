@@ -1,0 +1,41 @@
+# Template file for 'xdna-driver-git'
+pkgname=xdna-driver-git
+version=2026.05.22.0
+revision=1
+build_style=cmake
+configure_args="-DREG_BUILD=OFF -DCMAKE_INSTALL_LIBDIR=lib -DCPACK_GENERATOR=TGZ -DXDNA_CPACK_LINUX_PKG_FLAVOR=arch"
+hostmakedepends="cmake pkg-config git"
+makedepends="xdna-driver-xrt-git libdrm-devel opencl-headers ocl-icd-devel boost-devel ncurses-devel openssl-devel rapidjson libuuid-devel systemtap-devel"
+depends="xdna-driver-xrt-git"
+short_desc="Shim library for AMD Ryzen AI NPU (Using in-tree kernel driver)"
+maintainer="Florin Tanasă <florin.tanasa@gmail.com>"
+license="GPL-2.0-only, custom:AMD"
+homepage="https://github.com/amd/xdna-driver"
+
+do_fetch() {
+	:
+}
+
+do_extract() {
+	cd ${XBPS_BUILDDIR}
+	git clone --recursive https://github.com/amd/xdna-driver ${pkgname}-${version}
+}
+
+wrksrc="${pkgname}-${version}"
+build_wrksrc="."
+
+pre_configure() {
+	if [ -f "CMake/pkg.cmake" ]; then
+		vsed -i 's/message(FATAL_ERROR "Unknown Linux package flavor:/message(STATUS "Overriding flavor for Void Linux. Previous distro:/g' CMake/pkg.cmake
+	fi
+}
+
+do_install() {
+	# 1. Instalăm librăria shim pentru NPU în căile standard de runtime XRT
+	vmkdir usr/lib/xrt/modules
+	vcopy "build/src/shim/lib*" usr/lib/xrt/modules/
+
+	# 2. Instalăm permisiunile pentru memorie (limits.d)
+	vmkdir etc/security/limits.d
+	vinstall "${FILESDIR}/99-amdxdna.conf" 644 etc/security/limits.d
+}
